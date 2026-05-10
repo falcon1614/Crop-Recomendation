@@ -1,0 +1,108 @@
+/* ─── Fonts ─────────────────────────────────── */
+.font-display { font-family: 'Playfair Display', serif; }
+.font-sans    { font-family: 'DM Sans', sans-serif; }
+
+/* ─── Background ─────────────────────────────── */
+.bg-field {
+  background-color: #f0fdf4;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(134,239,172,0.25) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(187,247,208,0.2) 0%, transparent 50%);
+}
+
+/* ─── Navbar ─────────────────────────────────── */
+.bg-soil {
+  background: linear-gradient(135deg, #14532d, #166534);
+}
+
+/* ─── Section Titles ─────────────────────────── */
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #15803d;
+  border-bottom: 2px solid #bbf7d0;
+  padding-bottom: 0.4rem;
+}
+
+/* ─── Input Groups ───────────────────────────── */
+.input-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #166534;
+  margin-bottom: 0.35rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  border: 2px solid #d1fae5;
+  border-radius: 0.75rem;
+  font-size: 0.95rem;
+  color: #1a1a1a;
+  background: #f0fdf4;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  outline: none;
+}
+
+.form-input:focus {
+  border-color: #22c55e;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(34,197,94,0.15);
+}
+
+.form-input::placeholder {
+  color: #86efac;
+  font-style: italic;
+}
+
+/* Remove number input spinners */
+.form-input::-webkit-inner-spin-button,
+.form-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.form-input[type=number] { -moz-appearance: textfield; }
+
+/* ─── Submit Button ──────────────────────────── */
+.submit-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.85rem 2.5rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  box-shadow: 0 4px 20px rgba(22,163,74,0.35);
+  transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+}
+
+.submit-btn:hover {
+  background: linear-gradient(135deg, #15803d, #14532d);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(22,163,74,0.4);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 10px rgba(22,163,74,0.3);
+}
+
+/* ─── Result Banner ──────────────────────────── */
+.result-banner {
+  background: linear-gradient(135deg, #14532d, #166534, #15803d);
+  padding: 2rem 2.5rem;
+  animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
