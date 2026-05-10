@@ -6,26 +6,25 @@ from fastapi.staticfiles import StaticFiles
 import numpy as np
 import pickle
 from pathlib import Path
+from pathlib import Path
+import pickle
 
-# Base Directory
 BASE_DIR = Path(__file__).resolve().parent
 
-# Model Paths
-MODEL_PATH = BASE_DIR / "model_tuned.pkl"
-SCALER_PATH = BASE_DIR / "scaler.pkl"
+MODEL_PATH = BASE_DIR / "model.pkl"
 
-# Load Model
-with open(MODEL_PATH, "rb") as f:
-    model = pickle.load(f)
+SCALER_PATH = BASE_DIR / "minmaxscaler.pkl"
 
-# Load Scaler
-with open(SCALER_PATH, "rb") as f:
-    ms = pickle.load(f)
+model = pickle.load(open(MODEL_PATH, "rb"))
+
+ms = pickle.load(open(SCALER_PATH, "rb"))
+
 
 # Create App
 app = FastAPI(
     title="Crop Recommendation System"
 )
+
 
 # Static Files
 app.mount(
@@ -34,10 +33,12 @@ app.mount(
     name="static"
 )
 
+
 # Templates
 templates = Jinja2Templates(directory="templates")
 
-# Home Route
+
+# Home Page
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
 
@@ -47,6 +48,7 @@ def home(request: Request):
             "request": request
         }
     )
+
 
 # Prediction Route
 @app.post("/predict", response_class=HTMLResponse)
@@ -61,6 +63,7 @@ def predict(
     Rainfall: float = Form(...)
 ):
 
+    # Feature Array
     feature_list = [
         Nitrogen,
         Phosporus,
@@ -73,12 +76,13 @@ def predict(
 
     single_pred = np.array(feature_list).reshape(1, -1)
 
-    # Scale Input
+    # Scale Features
     scaled_features = ms.transform(single_pred)
 
-    # Predict
+    # Prediction
     prediction = model.predict(scaled_features)
 
+    # Crop Dictionary
     crop_dict = {
         1: "Rice",
         2: "Maize",
@@ -104,9 +108,11 @@ def predict(
         22: "Coffee"
     }
 
+    # Final Result
     if prediction[0] in crop_dict:
 
         crop = crop_dict[prediction[0]]
+
         result = f"{crop} is the best crop to cultivate."
 
     else:
@@ -120,6 +126,7 @@ def predict(
             "result": result
         }
     )
+
 
 # Run Server
 if __name__ == "__main__":
