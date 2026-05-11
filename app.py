@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 import numpy as np
 import pickle
 from pathlib import Path
+import uvicorn
 
 # Base Directory
 BASE_DIR = Path(__file__).resolve().parent
@@ -22,12 +23,12 @@ with open(MODEL_PATH, "rb") as f:
 with open(SCALER_PATH, "rb") as f:
     ms = pickle.load(f)
 
-# Create App
+# Create FastAPI App
 app = FastAPI(
     title="Crop Recommendation System"
 )
 
-# Static Files
+# Mount Static Files
 app.mount(
     "/static",
     StaticFiles(directory="static"),
@@ -36,6 +37,7 @@ app.mount(
 
 # Templates
 templates = Jinja2Templates(directory="templates")
+
 
 # Home Route
 @app.get("/", response_class=HTMLResponse)
@@ -47,6 +49,7 @@ def home(request: Request):
             "request": request
         }
     )
+
 
 # Prediction Route
 @app.post("/predict", response_class=HTMLResponse)
@@ -61,57 +64,41 @@ def predict(
     Rainfall: float = Form(...)
 ):
 
-    feature_list = [
-        Nitrogen,
-        Phosporus,
-        Potassium,
-        Temperature,
-        Humidity,
-        Ph,
-        Rainfall
-    ]
+    try:
 
-    single_pred = np.array(feature_list).reshape(1, -1)
+        # Create Feature List
+        feature_list = [
+            Nitrogen,
+            Phosporus,
+            Potassium,
+            Temperature,
+            Humidity,
+            Ph,
+            Rainfall
+        ]
 
-    # Scale Input
-    scaled_features = ms.transform(single_pred)
+        # Convert to NumPy Array
+        single_pred = np.array(feature_list).reshape(1, -1)
 
-    # Predict
-    prediction = model.predict(scaled_features)
+        # Scale Input
+        scaled_features = ms.transform(single_pred)
 
-    crop_dict = {
-        1: "Rice",
-        2: "Maize",
-        3: "Jute",
-        4: "Cotton",
-        5: "Coconut",
-        6: "Papaya",
-        7: "Orange",
-        8: "Apple",
-        9: "Muskmelon",
-        10: "Watermelon",
-        11: "Grapes",
-        12: "Mango",
-        13: "Banana",
-        14: "Pomegranate",
-        15: "Lentil",
-        16: "Blackgram",
-        17: "Mungbean",
-        18: "Mothbeans",
-        19: "Pigeonpeas",
-        20: "Kidneybeans",
-        21: "Chickpea",
-        22: "Coffee"
-    }
+        # Predict
+        prediction = model.predict(scaled_features)
 
-    if prediction[0] in crop_dict:
+        # Debug
+        print("Prediction:", prediction)
+        print("Type:", type(prediction[0]))
 
-        crop = crop_dict[prediction[0]]
+        # If model returns string directly
+        crop = str(prediction[0])
+
         result = f"{crop} is the best crop to cultivate."
 
-    else:
+    except Exception as e:
 
-        result = "Sorry, prediction could not be made."
+        print("Error:", e)
+        result = f"Error occurred: {e}"
 
     return templates.TemplateResponse(
         "index.html",
@@ -121,10 +108,9 @@ def predict(
         }
     )
 
+
 # Run Server
 if __name__ == "__main__":
-
-    import uvicorn
 
     uvicorn.run(
         "app:app",
